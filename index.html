@@ -1,24 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Пример сайта с захватом IP-адреса</title>
-    <script>
-        function getIP(json) {
-            var ipAddress = json.ip;
-            saveIPAddress(ipAddress);
-        }
-
-        function saveIPAddress(ipAddress) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "saveip.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("ip=" + ipAddress);
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP Address Sender</title>
 </head>
 <body>
-    <h1>Добро пожаловать на сайт!</h1>
-    <img src="photo.png" alt="Изображение">
-    <script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+<h1>IP Address Sender</h1>
+<p>Click the button to get your IP address and send it to PostBin:</p>
+<button id="getIpButton">Get My IP Address</button>
+
+<script>
+function sendIPToPostBin(ipAddress) {
+    fetch('https://www.postb.in/1742385923127-6425340522546', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ip: ipAddress })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('IP address successfully sent.');
+        } else {
+            console.error('Error sending IP address.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+document.getElementById('getIpButton').addEventListener('click', function() {
+    fetch('https://api64.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            const userIPAddress = data.ip;
+            console.log('User IP Address:', userIPAddress);
+            sendIPToPostBin(userIPAddress);
+        })
+        .catch(error => {
+            console.error('Error getting IP address:', error);
+        });
+});
+</script>
 </body>
 </html>
